@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>
+				OSB backup and restore
+		</title>
+		<link rel="stylesheet" type="text/css" href="css/osb.css"/>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+		<script src="https://npmcdn.com/tether@1.2.4/dist/js/tether.min.js"></script>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous"/>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+	</head>
+	<body>
+		<div id="service_details">
+			<h4>Service Details</h4><br>
+		<form action="index.html" id="actions_form">
+			<table>
+				<tr>
+					<td>Service:</td>
+					<td><input type="text" id ="get_service" size=20 /></td>
+				</tr>
+				<tr>
+					<td>Plan:</td>
+					<td><input type="text" id ="get_plan" size=20 /></td>
+				</tr>
+				<tr>
+					<td>Service Instance ID:</td>
+					<td><input type="text" id ="get_instance_id" size=20 /></td>
+				</tr>
+				<tr>
+					<td>Discovery Url:</td>
+					<td><input type="text" id="get_actions" size=80 /></td>
+				</tr>
+			</table>
+			<br/>
+			<div id="action_discovery_buttons">
+				<button type="button" id="get_avail_submit" onclick="displayActions()">Get Available Actions</button>
+				<button type="button" id="clear_action" onclick="clearActions()" >Clear</button>
+			</div>
+		</form>
+	</div>
+	<div id="service_actions">
+		<h5 id="actions_header"></h5><br>
+		<div id="action_buttons"></div>
+		<div id = "actions_result_div"></div>
+		<div id = "detail_div" style="display:none"></div>
+	</div>
+
+		<script type="text/javascript" src="js/osb.js"></script>
+	</body>
+</html>

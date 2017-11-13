@@ -1,0 +1,131 @@
+---
+swagger: "2.0"
+
+################################################################################
+#                              API Information                                 #
+################################################################################
+info:
+  version: "0.1"
+  title: Open Service Broker - Start, Stop, Pause, Restart Actions
+  description: This swagger specification defines the recommended approach to enabling start, stop, puase and restart actions via an Open Service Broker API implementation.
+
+################################################################################
+#                  Host, Base Path, Schemes and Content Types                  #
+################################################################################
+host: localhost:8080
+basePath: /
+schemes:
+  - http
+produces:
+  - application/json
+consumes:
+  - application/json
+
+################################################################################
+#                                   Tags                                       #
+################################################################################
+
+################################################################################
+#                                  Security                                    #
+################################################################################
+
+
+################################################################################
+#                                   Parameters                                 #
+################################################################################
+parameters:
+  instance_id:
+    name: instance_id
+    in: path
+    description: "The id of the service instance."
+    type: string
+    required: true
+ 
+################################################################################
+#                                           Paths                              #
+################################################################################
+paths:
+  /v2/service_instances/{instance_id}/start:
+    put:
+      tags:
+        - put
+      summary: "Start a service instance that is in a STOPPED state."
+      description: ""
+      operationId: "startService"
+      parameters:
+        - $ref: '#/parameters/instance_id'
+      responses:
+        200:
+          description: "successful operation"
+        default:
+          description: "unexpected error"
+          schema:
+            $ref: '#/definitions/error'
+            
+  /v2/service_instances/{instance_id}/stop:
+    put:
+      tags:
+        - put
+      summary: "Stop a service instance that is in a RUNNING state."
+      description: ""
+      operationId: "stopService"
+      parameters:
+        - $ref: '#/parameters/instance_id'
+      responses:
+        200:
+          description: "successful operation"
+        default:
+          description: "unexpected error"
+          schema:
+            $ref: '#/definitions/error'
+            
+  /v2/service_instances/{instance_id}/restart:
+    put:
+      tags:
+        - put
+      summary: "Restart a service instance that is in a RUNNING state."
+      description: ""
+      operationId: "restartService"
+      parameters:
+        - $ref: '#/parameters/instance_id'
+      responses:
+        200:
+          description: "successful operation"
+        default:
+          description: "unexpected error"
+          schema:
+            $ref: '#/definitions/error'
+            
+  /v2/service_instances/{instance_id}/pause:
+    put:
+      tags:
+        - put
+      summary: "Pause a service instance that is in a RUNNING state."
+      description: ""
+      operationId: "pauseService"
+      parameters:
+        - $ref: '#/parameters/instance_id'
+      responses:
+        200:
+          description: "successful operation"
+        default:
+          description: "unexpected error"
+          schema:
+            $ref: '#/definitions/error'           
+            
+################################################################################
+#                               Definitions                                    #
+################################################################################
+
+definitions:
+
+  error:
+    required:
+      - code
+      - message
+    properties:
+      code:
+        type: integer
+        format: int32
+      message:
+        type: string

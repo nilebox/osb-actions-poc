@@ -1,0 +1,82 @@
+button[type=button] {
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 12px;
+    margin: 4px 2px;
+    cursor: pointer;
+    width: 200px;
+}
+
+.popover {
+    max-width: 800px !important;
+    width:auto;
+}
+
+#backup_details {
+    background:none;
+    border:none;
+    cursor: pointer;
+}
+
+#actions_result_div {
+    position: absolute;
+    top: 425px;
+    left: 400px;
+}
+
+#detail_div {
+    position: absolute;
+    top: 250px;
+    left: 800px;
+
+}
+
+#restore_table{
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+
+td {
+    padding: 10px;
+    cursor: pointer;
+}
+
+#take_new_backup_table, td,th {
+    border: none;
+}
+
+#take_new_backup_table {
+    width: 50%
+}
+
+#take_new_restore_table, td,th {
+    border: none;
+}
+
+#take_new_restore_table {
+    width: 50%
+}
+
+input[type=submit] {
+    font-size:16px;
+    width: 200px
+}
+
+#action_discovery_buttons {
+    position: absolute;
+    left: 560px;
+}
+
+#service_details {
+    margin: 20px;
+}
+
+#service_actions {
+    margin-top: 40px;
+    margin-left: 20px;
+    margin-right: 20px;
+    padding: 20px;
+    border-top: 5px solid #999999;
+    display: none;
+}

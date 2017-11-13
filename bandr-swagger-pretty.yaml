@@ -1,0 +1,483 @@
+---
+swagger: "2.0"
+
+################################################################################
+#                              API Information                                 #
+################################################################################
+info:
+  version: "0.1"
+  title: Open Service Broker - Backup & Restore Actions
+  description: This swagger specification defines the recommended approach to enabling backup and restore actions via an Open Service Broker API implementation.
+
+################################################################################
+#                  Host, Base Path, Schemes and Content Types                  #
+################################################################################
+host: localhost:8080
+basePath: /
+schemes:
+  - http
+produces:
+  - application/json
+consumes:
+  - application/json
+
+################################################################################
+#                                   Tags                                       #
+################################################################################
+
+################################################################################
+#                                  Security                                    #
+################################################################################
+
+
+################################################################################
+#                                   Parameters                                 #
+################################################################################
+parameters:
+  instance_id:
+    name: instance_id
+    in: path
+    description: "The id of the service instance."
+    type: string
+    required: true
+  backup_id:
+    name: backup_id
+    in: path
+    description: "The id of the backup for a service instance."
+    type: string
+    required: true    
+  backup_body:
+    name: backup_body
+    in: body
+    description: "The details of the backup to be taken."
+    required: true
+    schema:
+      $ref: "#/definitions/new_backup"
+  update_backup_body:
+    name: update_backup_body
+    in: body
+    description: "The details of the backup to be updated."
+    required: true
+    schema:
+      $ref: "#/definitions/update_backup"    
+  restore_body:
+    name: restore_body
+    in: body
+    description: "The details of the restore."
+    required: true
+    schema:
+      $ref: "#/definitions/new_restore"
+
+################################################################################
+#                                           Paths                              #
+################################################################################
+paths:
+  /v2/service_instances/{instance_id}:
+    parameters:
+      - $ref: '#/parameters/instance_id'
+    put:
+      operationId: createServiceInstance
+      produces:
+        - application/json
+      consumes:
+        - application/json
+      tags:
+        - put
+      description: >
+        When the broker receives a provision request from a client, it should synchronously take
+        whatever action is necessary to create a new service resource for the developer.
+        The result of provisioning varies by service type, although there are a few
+        common actions that work for many services. Supports asynchronous operations.'
+      summary: Provisions a service instance
+      parameters:
+        # - name: X-Broker-Api-Version
+        #   in: header
+        #   description: Version of API requested
+        #   required: true
+        #   type: string
+        #   format: string
+        - name: service
+          required: true
+          description: Service information.
+          in: body
+          schema:
+            $ref: '#/definitions/ServiceRequest'
+        - in: query
+          name: accept_incomplete
+          required: false
+          description: 'Indicates that the client is supporting asynchronous operations'
+          type: boolean
+      responses:
+        '201':
+          description: Service instance has been created.
+          schema:
+            $ref: '#/definitions/ServiceResponse'
+            
+ 
+            
+  /v2/service_instances/{instance_id}/backups:
+    get:
+      tags:
+        - get
+      summary: "List all of the backups available on this service instance."
+      description: ""
+      operationId: "getBackups"
+      parameters:
+        - $ref: '#/parameters/instance_id'
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/backup"
+        default:
+          description: "unexpected error"
+          schema:
+            $ref: '#/definitions/error'
+    post:
+      tags:
+        - post
+      summary: "Create a new backup for this service instance."
+      description: ""
+      operationId: "createBackup"
+      parameters:
+        - $ref: '#/parameters/instance_id'
+        - $ref: '#/parameters/backup_body'
+      responses:
+        201:
+          description: "created"
+          schema:
+            $ref: '#/definitions/backup'
+        202:
+          description: "accepted"
+          schema:
+            $ref: "#/definitions/status"
+        default:
+          description: "unexpected error"
+          schema:
+            $ref: '#/definitions/error'
+            
+  /v2/service_instances/{instance_id}/backups/{backup_id}:
+    get:
+      tags:
+        - get
+      summary: "Get the details of a backup on a service instance."
+      description: ""
+      operationId: "getBackup"
+      parameters:
+        - $ref: '#/parameters/instance_id'
+        - $ref: '#/parameters/backup_id'
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: '#/definitions/backup'
+        default:
+          description: "unexpected error"
+          schema:
+            $ref: '#/definitions/error'
+    put:
+      tags:
+        - put
+      summary: "Update the details of a backup on a service instance."
+      description: ""
+      operationId: "updateBackup"
+      parameters:
+        - $ref: '#/parameters/instance_id'
+        - $ref: '#/parameters/backup_id'
+        - $ref: '#/parameters/update_backup_body'
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: '#/definitions/backup'
+        default:
+          description: "unexpected error"
+          schema:
+            $ref: '#/definitions/error'
+    delete:
+      tags:
+        - delete
+      summary: "Delete a backup for this service instance."
+      description: ""
+      operationId: "deleteBackup"
+      parameters:
+        - $ref: '#/parameters/instance_id'
+        - $ref: '#/parameters/backup_id'
+      responses:
+        200:
+          description: "successful operation"
+        default:
+          description: "unexpected error"
+          schema:
+            $ref: '#/definitions/error'
+
+  /v2/service_instances/{instance_id}/restores:
+    get:
+      tags:
+        - get
+      summary: "List all of the previously restored backups on this service instance"
+      description: ""
+      operationId: "getRestores"
+      parameters:
+        - $ref: '#/parameters/instance_id'      
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/restore"
+        default:
+          description: "unexpected error"
+          schema:
+            $ref: '#/definitions/error'
+    post:
+      tags:
+        - post
+      summary: "Restore a service instance."
+      description: ""
+      operationId: "createRestore"
+      parameters:
+        - $ref: '#/parameters/instance_id'
+        - $ref: '#/parameters/restore_body'
+      responses:
+        201:
+          description: "created"
+          schema:
+            $ref: "#/definitions/restore"
+        202:
+          description: "accepted"
+          schema:
+            $ref: "#/definitions/status"
+        default:
+          description: "unexpected error"
+          schema:
+            $ref: '#/definitions/error'
+
+  /v2/actions/swagger:
+    get:
+      tags:
+        - get
+      summary: "Get a swagger for your generic actions"
+      description: ""
+      operationId: "getSwagger"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: '#/definitions/swagger'
+        default:
+          description: "unexpected error"
+          schema:
+            $ref: '#/definitions/error' 
+
+################################################################################
+#                               Definitions                                    #
+################################################################################
+
+definitions:
+
+  backup:
+    allOf:
+      - $ref: '#/definitions/new_backup'
+    properties:
+      backup_id:
+        type: "string"
+        description: "A unique id for backups on this service instance."
+        example: "1234"
+      size:
+        type: "integer"
+        description: "The size (in MB) of the backup file."
+        example: "203"
+      backup_date:
+        type: "string"
+        description: "The date/time when the backup was initiated."
+        example: "2017-09-11T21:52:13+00:00"
+      user:
+        type: "string"
+        description: "The username of the user that initiated the backup."
+        example: "John Adams"
+
+  restore:
+    allOf:
+      - $ref: '#/definitions/new_restore'
+    properties:
+      restore_id:
+        type: "string"
+        description: "A unique id for restore on this service instance."
+        example: "5678"
+      restore_date:
+        type: "string"
+        description: "The date/time when the restore was initiated."
+        example: "2017-09-11T21:52:13+00:00"
+      user:
+        type: "string"
+        description: "The username of the user that initiated the restore."
+        example: "John Adams"
+
+  new_backup:
+    allOf:
+      - $ref: '#/definitions/update_backup'
+    properties:
+      backup_type:
+        type: "string"
+        description: "A unique id for backups on this service instance."
+        example: "incremental"
+        enum:
+          - "full"
+          - "incremental"
+          - "logical"
+          - "physical"
+          
+  update_backup:
+    type: "object"
+    properties:
+      expires:
+        type: "string"
+        description: "The date/time when the backup file will be purged from the system."
+        example: "12/31/2020"
+      backup_location:
+        type: "string"
+        description: "The path or url to the backup file. Use 'none' for the default loction."
+        example: "http://s3.amazonaws.com/bucket/backup1.tar"
+      backup_location_protocol:
+        type: "string"
+        description: "The protocol of the backup location."
+        example: "s3"
+        enum:
+          - "nfs"
+          - "s3"
+      backup_location_credentials:
+        type: "string"
+        description: "The credentials of the backup location."
+        example: "admin/password"          
+      note:
+        type: "string"
+        description: "A custom message about the specific backup action."
+        example: "Changing expiration date of this backup."
+      compression:
+        type: "string"
+        description: "The type of compression to be used for the backup file. Use 'none' for no compression."
+        example: "tar"
+        enum:
+          - "none"
+          - "tar"
+          - "zip"        
+      encryption:
+        type: "string"
+        description: "The type of encryption to be used for the backup file. Use 'none' for no encryption."
+        example: "AES128"
+        default: "none"
+        enum:
+          - "none"
+          - "AES128"
+          - "DES128"
+          - "RSA"
+
+  new_restore:
+    type: "object"
+    properties:
+      backup_location:
+        type: "string"
+        description: "Location of the backup file to restore."
+        example: "http://s3.amazonaws.com/bucket/backup1.tar"
+      note:
+        type: "string"
+        description: "A custom message about the specific restore action."
+        example: "Had to restore from an error at 12pm EST."
+
+  status:
+    type: "string"
+    
+  ServiceRequest:
+    description: Request for a Service instance
+    required:
+      - service_id
+      - plan_id
+      - organization_guid
+      - space_guid
+    properties:
+      service_id:
+        type: string
+        description: >
+          The ID of the service (from the catalog).
+          MUST be globally unique.
+          MUST be a non-empty string.
+      plan_id:
+        type: string
+        description: >
+          The ID of the plan (from the catalog) for which the service instance has
+          been requested. MUST be unique to a service. MUST be a non-empty string.
+      context:
+        type: object
+        description: >
+          Platform specific contextual information under which the service instance
+          is to be provisioned. Although most brokers will not use this field,
+          it could be helpful in determining data placement or applying custom
+          business rules. context will replace `organization_guid` and `space_guid`
+          in future versions of the specification - in the interim both SHOULD
+          be used to ensure interoperability with old and new implementations.
+      organization_guid:
+        type: string
+        description: >
+          Deprecated in favor of context. The platform GUID for the organization
+          under which the service instance is to be provisioned.
+          Although most brokers will not use this field, it might be helpful
+          for executing operations on a user's behalf.
+          MUST be a non-empty string.
+      space_guid:
+        type: string
+        description: >
+          Deprecated in favor of context. The identifier for the project
+          space within the platform organization. Although most brokers
+          will not use this field, it might be helpful for executing operations
+          on a user's behalf. MUST be a non-empty string.
+      parameters:
+        type: object
+        description: >
+          Configuration options for the service instance.
+          Controller treats this as a blob.
+          Brokers SHOULD ensure that the client has provided
+          valid configuration parameters and values for the operation.
+          
+  ServiceResponse:
+    description: >
+      The URL of a web-based management user interface for the service instance; we refer to
+      this as a service dashboard. The URL should contain enough information for the dashboard to
+      identify the resource being accessed.
+    required:
+      - dashboard_url
+    properties:
+      dashboard_url:
+        type: string
+        description: >
+          The URL of a web-based management user interface for the service instance;
+          we refer to this as a service dashboard. The URL MUST contain enough information
+          for the dashboard to identify the resource being accessed (9189kdfsk0vfnku
+          in the example below). Note: a broker that wishes to return dashboard_url
+          for a service instance MUST return it with the initial response to the
+          provision request, even if the service is provisioned asynchronously.
+          If present, MUST be a non-empty string.
+      operation:
+        type: string
+        description: >
+          For asynchronous responses, service brokers MAY return an identifier
+          representing the operation. The value of this field MUST be provided
+          by the platform with requests to the Last Operation endpoint in a
+          URL encoded query parameter. If present, MUST be a non-empty string.
+          
+  swagger:
+    type: "object"         
+
+  error:
+    required:
+      - code
+      - message
+    properties:
+      code:
+        type: integer
+        format: int32
+      message:
+        type: string
